@@ -1,5 +1,4 @@
 import { Client } from "@dagger.io/dagger";
-import { withDevbox } from "https://deno.land/x/nix_installer_pipeline@v0.3.6/src/dagger/steps.ts";
 
 export enum Job {
   deploy = "deploy",
@@ -7,28 +6,22 @@ export enum Job {
 
 export const deploy = async (client: Client, src = ".") => {
   const context = client.host().directory(src);
-  const ctr = withDevbox(
-    client
-      .pipeline(Job.deploy)
-      .container()
-      .from("alpine:latest")
-      .withExec(["apk", "update"])
-      .withExec(["apk", "add", "curl", "bash"])
-      .withMountedCache("/nix", client.cacheVolume("nix"))
-      .withMountedCache("/etc/nix", client.cacheVolume("nix-etc"))
-  )
-    .withMountedCache(
-      "/root/.local/share/devbox/global",
-      client.cacheVolume("devbox-global")
-    )
-    .withExec(["devbox", "global", "add", "flyctl"])
-    .withEnvVariable("NIX_INSTALLER_NO_CHANNEL_ADD", "1")
+  const ctr = client
+    .pipeline(Job.deploy)
+    .container()
+    .from("alpine:latest")
+    .withExec(["apk", "update"])
+    .withExec(["apk", "add", "curl", "bash"])
+    .withExec(["sh", "-c", "curl -L https://fly.io/install.sh | sh"])
+    .withEnvVariable("FLYCTL_INSTALL", "/root/.fly")
+    .withExec(["ln", "-s", "$FLYCTL_INSTALL/flyctl", "/usr/local/bin/fly"])
+    .withEnvVariable("PATH", "$FLYCTL_INSTALL/bin:$PATH", { expand: true })
     .withDirectory("/app", context, {
       exclude: [".git", ".devbox", "node_modules", ".fluentci"],
     })
     .withWorkdir("/app")
     .withEnvVariable("FLY_API_TOKEN", Deno.env.get("FLY_API_TOKEN") || "")
-    .withExec(["sh", "-c", "devbox global run -- fly deploy --remote-only"]);
+    .withExec(["sh", "-c", "fly deploy --remote-only"]);
 
   const result = await ctr.stdout();
 
