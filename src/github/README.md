@@ -1,5 +1,9 @@
 # Github Actions
 
+[![deno module](https://shield.deno.dev/x/fly_pipeline)](https://deno.land/x/fly_pipeline)
+![deno compatibility](https://shield.deno.dev/deno/^1.34)
+[![](https://img.shields.io/codecov/c/gh/fluent-ci-templates/fly-pipeline)](https://codecov.io/gh/fluent-ci-templates/fly-pipeline)
+
 The following command will generate a `.github/workflows/deploy.yml` file in your project:
 
 ```bash
