@@ -4,6 +4,8 @@ export enum Job {
   deploy = "deploy",
 }
 
+export const exclude = [".git", ".devbox", "node_modules", ".fluentci"];
+
 export const deploy = async (client: Client, src = ".") => {
   const context = client.host().directory(src);
   const ctr = client
@@ -16,9 +18,7 @@ export const deploy = async (client: Client, src = ".") => {
     .withEnvVariable("FLYCTL_INSTALL", "/root/.fly")
     .withExec(["ln", "-s", "$FLYCTL_INSTALL/flyctl", "/usr/local/bin/fly"])
     .withEnvVariable("PATH", "$FLYCTL_INSTALL/bin:$PATH", { expand: true })
-    .withDirectory("/app", context, {
-      exclude: [".git", ".devbox", "node_modules", ".fluentci"],
-    })
+    .withDirectory("/app", context, { exclude })
     .withWorkdir("/app")
     .withEnvVariable("FLY_API_TOKEN", Deno.env.get("FLY_API_TOKEN") || "")
     .withExec(["sh", "-c", "fly deploy --remote-only"]);

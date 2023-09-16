@@ -33,9 +33,7 @@ You can also use this pipeline programmatically:
 
 ```typescript
 import Client, { connect } from "https://sdk.fluentci.io/v0.1.4/mod.ts";
-import { Dagger } from "https://pkg.fluentci.io/fly_pipeline/mod.ts";
-
-const { deploy } = Dagger;
+import { deploy } from "https://pkg.fluentci.io/fly_pipeline@v0.5.0/mod.ts";
 
 function pipeline(src = ".") {
   connect(async (client: Client) => {
