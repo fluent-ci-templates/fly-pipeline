@@ -32,8 +32,8 @@ dagger run fluentci fly_pipeline
 You can also use this pipeline programmatically:
 
 ```typescript
-import Client, { connect } from "https://sdk.fluentci.io/v0.1.7/mod.ts";
-import { deploy } from "https://pkg.fluentci.io/fly_pipeline@v0.5.0/mod.ts";
+import Client, { connect } from "https://sdk.fluentci.io/v0.1.9/mod.ts";
+import { deploy } from "https://pkg.fluentci.io/fly_pipeline@v0.5.1/mod.ts";
 
 function pipeline(src = ".") {
   connect(async (client: Client) => {
