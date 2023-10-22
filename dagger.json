@@ -1,0 +1,5 @@
+{
+  "root": "",
+  "name": "fly",
+  "sdkRuntime": "tsiry/dagger-sdk-deno"
+}
