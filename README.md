@@ -9,10 +9,24 @@ A ready-to-use CI/CD Pipeline for deploying your applications to [Fly.io](https:
 
 ## 🚀 Usage
 
-Run the following command:
+Run the following command in your project:
 
 ```bash
-dagger run fluentci fly_pipeline
+fluentci run fly_pipeline
+```
+
+Or, if you want to use it as a template:
+
+```bash
+fluentci init -t fly
+```
+
+This will create a `.fluentci`` folder in your project.
+
+Now you can run the pipeline with:
+
+```bash
+fluentci run .
 ```
 
 ## Environment Variables
