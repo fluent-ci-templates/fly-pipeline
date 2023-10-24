@@ -7,7 +7,7 @@ export enum Job {
 export const exclude = [".git", ".devbox", "node_modules", ".fluentci"];
 
 export const deploy = async (src = ".", token?: string) => {
-  await connect(async (client) => {
+  await connect(async (client: Client) => {
     const context = client.host().directory(src);
     const ctr = client
       .pipeline(Job.deploy)
