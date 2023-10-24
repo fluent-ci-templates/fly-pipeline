@@ -21,7 +21,7 @@ Or, if you want to use it as a template:
 fluentci init -t fly
 ```
 
-This will create a `.fluentci`` folder in your project.
+This will create a `.fluentci` folder in your project.
 
 Now you can run the pipeline with:
 
