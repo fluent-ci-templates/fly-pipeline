@@ -12,7 +12,7 @@ export default async function pipeline(src = ".", args: string[] = []) {
     return;
   }
 
-  await deploy();
+  await deploy(src, Deno.env.get("FLY_API_TOKEN")!);
 }
 
 async function runSpecificJobs(args: jobs.Job[]) {
@@ -21,6 +21,6 @@ async function runSpecificJobs(args: jobs.Job[]) {
     if (!job) {
       throw new Error(`Job ${name} not found`);
     }
-    await job();
+    await job(".", Deno.env.get("FLY_API_TOKEN")!);
   }
 }

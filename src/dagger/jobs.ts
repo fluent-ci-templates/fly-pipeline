@@ -1,4 +1,6 @@
-import Client, { connect } from "../../deps.ts";
+import Client, { Directory, Secret } from "../../deps.ts";
+import { connect } from "../../sdk/connect.ts";
+import { getDirectory, getFlyApiToken } from "./lib.ts";
 
 export enum Job {
   deploy = "deploy",
@@ -6,9 +8,26 @@ export enum Job {
 
 export const exclude = [".git", ".devbox", "node_modules", ".fluentci"];
 
-export const deploy = async (src = ".", token?: string) => {
+/**
+ * @function
+ * @description Deploy to Fly.io
+ * @param {Directory | string} src The directory to deploy
+ * @param {Secret | string} token Fly.io Access Token
+ * @returns {Promise<string>}
+ */
+export async function deploy(
+  src: Directory | string,
+  token: Secret | string
+): Promise<string> {
   await connect(async (client: Client) => {
-    const context = client.host().directory(src);
+    const context = getDirectory(client, src);
+    const secret = getFlyApiToken(client, token);
+
+    if (!secret) {
+      console.error("FLY_API_TOKEN not found");
+      Deno.exit(1);
+    }
+
     const ctr = client
       .pipeline(Job.deploy)
       .container()
@@ -21,10 +40,7 @@ export const deploy = async (src = ".", token?: string) => {
       .withEnvVariable("PATH", "$FLYCTL_INSTALL/bin:$PATH", { expand: true })
       .withDirectory("/app", context, { exclude })
       .withWorkdir("/app")
-      .withEnvVariable(
-        "FLY_API_TOKEN",
-        Deno.env.get("FLY_API_TOKEN") || token || ""
-      )
+      .withSecretVariable("FLY_API_TOKEN", secret)
       .withExec(["sh", "-c", "fly deploy --remote-only"]);
 
     const result = await ctr.stdout();
@@ -32,20 +48,12 @@ export const deploy = async (src = ".", token?: string) => {
     console.log(result);
   });
   return "done";
-};
+}
 
 export type JobExec = (
-  src?: string,
-  token?: string
-) =>
-  | Promise<string>
-  | ((
-      src?: string,
-      token?: string,
-      options?: {
-        ignore: string[];
-      }
-    ) => Promise<string>);
+  src: Directory | string,
+  token: Secret | string
+) => Promise<string>;
 
 export const runnableJobs: Record<Job, JobExec> = {
   [Job.deploy]: deploy,

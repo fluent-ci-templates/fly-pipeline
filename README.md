@@ -29,6 +29,15 @@ Now you can run the pipeline with:
 fluentci run .
 ```
 
+## Dagger Module
+
+Use as a [Dagger](https://dagger.io) Module:
+
+```bash
+dagger mod install github.com/fluent-ci-templates/fly-pipeline@mod
+```
+
+
 ## Environment Variables
 
 | Variable      | Description         |
@@ -41,8 +50,11 @@ fluentci run .
 |---------|----------------------------------|
 | deploy  | Deploys your application to Fly. |
 
-```graphql
-deploy(src: String!, token: String!): String
+```typescript
+deploy(
+  src: Directory | string,
+  token: Secret | string
+): Promise<string>
 ```
 
 ## Programmatic usage
@@ -52,5 +64,5 @@ You can also use this pipeline programmatically:
 ```typescript
 import { deploy } from "https://pkg.fluentci.io/fly_pipeline@v0.6.0/mod.ts";
 
-await deploy();
+await deploy(".", Deno.env.get("FLY_API_TOKEN")!);
 ```
