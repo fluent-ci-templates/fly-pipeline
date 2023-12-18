@@ -62,7 +62,7 @@ deploy(
 You can also use this pipeline programmatically:
 
 ```typescript
-import { deploy } from "https://pkg.fluentci.io/fly_pipeline@v0.6.0/mod.ts";
+import { deploy } from "https://pkg.fluentci.io/fly_pipeline@v0.7.0/mod.ts";
 
 await deploy(".", Deno.env.get("FLY_API_TOKEN")!);
 ```
