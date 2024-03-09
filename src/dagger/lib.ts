@@ -1,36 +1,45 @@
-import { Directory, DirectoryID, Secret, SecretID } from "../../deps.ts";
-import { Client } from "../../sdk/client.gen.ts";
+import {
+  dag,
+  env,
+  Directory,
+  DirectoryID,
+  Secret,
+  SecretID,
+} from "../../deps.ts";
 
 export const getDirectory = async (
-  client: Client,
   src: string | Directory | undefined = "."
 ) => {
+  if (src instanceof Directory) {
+    return src;
+  }
   if (typeof src === "string") {
     try {
-      const directory = client.loadDirectoryFromID(src as DirectoryID);
+      const directory = dag.loadDirectoryFromID(src as DirectoryID);
       await directory.id();
       return directory;
     } catch (_) {
-      return client.host().directory(src);
+      return dag.host
+        ? dag.host().directory(src)
+        : dag.currentModule().source().directory(src);
     }
   }
-  return src instanceof Directory ? src : client.host().directory(src);
+  return dag.host
+    ? dag.host().directory(src)
+    : dag.currentModule().source().directory(src);
 };
 
-export const getFlyApiToken = async (
-  client: Client,
-  token?: string | Secret
-) => {
-  if (Deno.env.get("FLY_API_TOKEN")) {
-    return client.setSecret("FLY_API_TOKEN", Deno.env.get("FLY_API_TOKEN")!);
+export const getFlyApiToken = async (token?: string | Secret) => {
+  if (env.get("FLY_API_TOKEN")) {
+    return dag.setSecret("FLY_API_TOKEN", env.get("FLY_API_TOKEN")!);
   }
   if (token && typeof token === "string") {
     try {
-      const secret = client.loadSecretFromID(token as SecretID);
+      const secret = dag.loadSecretFromID(token as SecretID);
       await secret.id();
       return secret;
     } catch (_) {
-      return client.setSecret("FLY_API_TOKEN", token);
+      return dag.setSecret("FLY_API_TOKEN", token);
     }
   }
   if (token && token instanceof Secret) {
