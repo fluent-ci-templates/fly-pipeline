@@ -2,8 +2,8 @@
  * @module fly
  * @description This module provides a function to deploy applications to Fly.io
  */
-import { Directory, Secret, dag, exit } from "../../deps.ts";
-import { getDirectory, getFlyApiToken } from "./lib.ts";
+import { type Directory, type Secret, dag, exit } from "../deps.ts";
+import { getDirectory, getFlyApiToken } from "./helpers.ts";
 
 export enum Job {
   deploy = "deploy",
