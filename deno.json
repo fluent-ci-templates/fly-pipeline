@@ -1,6 +1,6 @@
 {
   "name": "@fluentci/fly",
-  "version": "0.8.0",
+  "version": "0.9.1",
   "exports": "./mod.ts",
   "importMap": "import_map.json",
   "tasks": {
